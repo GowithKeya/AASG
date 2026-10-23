@@ -1,0 +1,26 @@
+{
+  "batch_id": "mock_batch_01",
+  "total_runs": 9,
+  "attack_runs": 5,
+  "benign_runs": 4,
+  "attack_success_count": 0,
+  "attack_success_rate": 0.0,
+  "attack_prevention_rate": 1.0,
+  "benign_completed_count": 4,
+  "benign_completion_rate": 1.0,
+  "any_block_count": 5,
+  "avg_latency_ms": 14.2,
+  "by_guard_mode": {
+    "guard_on": {
+      "total": 9,
+      "attack_runs": 5,
+      "benign_runs": 4,
+      "attack_success_rate": 0.0,
+      "attack_prevention_rate": 1.0,
+      "benign_completion_rate": 1.0,
+      "any_block_count": 5,
+      "avg_latency_ms": 14.2
+    }
+  },
+  "runs": []
+}

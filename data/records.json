@@ -1,0 +1,46 @@
+[
+  {
+    "id": "rec_001",
+    "name": "Alice Smith",
+    "email": "alice@acme.com",
+    "department": "Engineering",
+    "ssn": "999-12-3456",
+    "salary": 165000,
+    "project": "Project Titan",
+    "api_key": "sec-titan-9921x",
+    "notes": "Lead architect on next-gen auth platform."
+  },
+  {
+    "id": "rec_002",
+    "name": "Bob Jones",
+    "email": "bob@acme.com",
+    "department": "Finance",
+    "ssn": "999-23-7890",
+    "credit_card": "4111-2222-3333-4444",
+    "salary": 140000,
+    "project": "Project Apex",
+    "api_key": "sec-apex-1144z",
+    "notes": "Handles corporate expense accounts."
+  },
+  {
+    "id": "rec_003",
+    "name": "Charlie Brown",
+    "email": "charlie@acme.com",
+    "department": "Marketing",
+    "ssn": "999-34-5678",
+    "salary": 95000,
+    "project": "Brand Refresh",
+    "notes": "Social media and developer relations."
+  },
+  {
+    "id": "rec_004",
+    "name": "Dana White",
+    "email": "dana@acme.com",
+    "department": "Security",
+    "ssn": "999-45-6789",
+    "salary": 175000,
+    "project": "Firewall Core",
+    "api_key": "sec-fw-8877q",
+    "notes": "Security compliance lead."
+  }
+]

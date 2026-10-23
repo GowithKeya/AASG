@@ -1,0 +1,18 @@
+allowed_tools:
+  - read_doc
+  - search_records
+  - send_email
+  - http_post
+  - delete_file
+
+always_approve:
+  - delete_file
+
+allowed_domains:
+  - acme.com
+
+sinks:
+  send_email:
+    dest_arg: to
+  http_post:
+    dest_arg: url
