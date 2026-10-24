@@ -4,7 +4,7 @@ import json
 from dashboard.api import fetch_events, fetch_approvals, submit_approval, fetch_metrics, trigger_suite, run_task
 
 st.set_page_config(
-    page_title="CY-03 Agent Firewall | Taint-Tracking Security",
+    page_title="Agent Firewall | Taint-Tracking Security",
     page_icon="🛡️",
     layout="wide"
 )
@@ -133,7 +133,7 @@ st.markdown("""
 
 st.markdown("""
 <div class="header-banner">
-    <div class="header-title">🛡️ CY-03 Taint-Tracking Agent Firewall</div>
+    <div class="header-title">🛡️ Agent Firewall</div>
     <div class="header-subtitle">Deterministic tool policy enforcement & data flow tracking for autonomous AI agents</div>
 </div>
 """, unsafe_allow_html=True)

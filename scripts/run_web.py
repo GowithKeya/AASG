@@ -8,7 +8,7 @@ def main():
     os.chdir(base_dir)
 
     print("==================================================")
-    print("       AASG / CY-03 Agent Firewall Launcher       ")
+    print("             Agent Firewall Launcher              ")
     print("==================================================")
     print(f"Working Directory: {base_dir}")
 
@@ -22,19 +22,19 @@ def main():
 
     python_exe = sys.executable
 
-    print("\n[1/2] Starting FastAPI Backend on http://127.0.0.1:8000 ...")
+    print("\n[1/2] Starting Agent Firewall API server on http://127.0.0.1:8000 ...")
     api_proc = subprocess.Popen(
         [python_exe, "-m", "uvicorn", "guard.api:app", "--host", "127.0.0.1", "--port", "8000"]
     )
     time.sleep(2)
 
-    print("[2/2] Starting Streamlit Security Dashboard on http://localhost:8501 ...")
+    print("[2/2] Starting Agent Firewall Streamlit Dashboard on http://localhost:8501 ...")
     dashboard_proc = subprocess.Popen(
         [python_exe, "-m", "streamlit", "run", "dashboard/app.py", "--server.port", "8501", "--server.headless", "true"]
     )
 
     print("\n" + "="*50)
-    print("  [SUCCESS] AASG Services are running:")
+    print("  [SUCCESS] Agent Firewall Services are running:")
     print("   - Web Dashboard: http://localhost:8501")
     print("   - API Docs:      http://127.0.0.1:8000/docs")
     print("   - API Endpoints: http://127.0.0.1:8000")
@@ -50,7 +50,7 @@ def main():
         dashboard_proc.terminate()
         api_proc.wait()
         dashboard_proc.wait()
-        print("AASG services cleanly stopped.")
+        print("Agent Firewall services cleanly stopped.")
 
 if __name__ == "__main__":
     main()
