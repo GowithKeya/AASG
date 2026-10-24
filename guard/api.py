@@ -1,4 +1,6 @@
+import os
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from shared.schemas import Session, ToolCall, Chunk, Verdict
 from shared.db import get_joined_events, get_pending_approvals, resolve_approval
@@ -6,6 +8,16 @@ from guard.core import ingest_user, tag_result, decide
 from redteam.metrics import compute_metrics
 
 app = FastAPI(title="CY-03 Agent Firewall API")
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+INDEX_PATH = os.path.join(BASE_DIR, "index.html")
+
+@app.get("/", response_class=FileResponse)
+def serve_landing():
+    if os.path.exists(INDEX_PATH):
+        return FileResponse(INDEX_PATH)
+    return {"status": "ok", "service": "AgentGuard Firewall L7 API", "docs": "/docs"}
+
 
 class ApprovalRequest(BaseModel):
     approve: bool

